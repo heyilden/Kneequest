@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Knee Quest",
+  "short_name": "KneeQuest",
+  "description": "Tes seances, ton rythme. Application de suivi personnelle.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0c1117",
+  "theme_color": "#0c1117",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
