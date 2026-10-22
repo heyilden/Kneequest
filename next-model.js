@@ -15,7 +15,7 @@ function validateState(s){s=migrate(oldValidate(s));if(!Array.isArray(s.wellness
 function credited(i){return !!(K.completedItem(i)||i.rotationCredit===true);}
 function creditDate(i,s,tz){if(K.validDate(i.validatedDate))return i.validatedDate;if(i.validatedAt)return K.dateKey(new Date(i.validatedAt),tz);if(K.completedItem(i)&&i.log?.length){const t=i.log[i.log.length-1].at;if(t&&!Number.isNaN(+new Date(t)))return K.dateKey(new Date(t),tz);}return s.date;}
 function ledger(history,tz='Europe/Luxembourg',date='9999-12-31'){
- const list=[];for(const s of history){if(s.status==='discarded')continue;for(const i of s.items||[]){if(i.bonus||!credited(i))continue;const d=creditDate(i,s,tz);if(!K.validDate(d)||d>date)continue;
+ const list=[];for(const s of history){if(s.status==='discarded')continue;for(const i of s.items||[]){if(i.bonus||i.ankleAddon||!credited(i))continue;const d=creditDate(i,s,tz);if(!K.validDate(d)||d>date)continue;
  const gs=[...new Set(i.assignedGroups?.length?i.assignedGroups:[i.group])];for(const g of gs)list.push({date:d,week:K.weekKey(d),group:g,mode:i.mode==='base'?s.mode:i.mode,block:i.block,relatedGroups:[...new Set([i.group,...i.groups||[]])],id:i.id,sessionId:s.id,manual:i.rotationCredit===true,at:i.validatedAt||s.completedAt||s.startedAt||0});}}
  return list.sort((a,b)=>a.date.localeCompare(b.date)||a.at-b.at);
 }
@@ -25,7 +25,7 @@ function rotation(history,allowed=K.MODES,rule=upgradeRule(oldRule()),date='9999
  const done=(i,s)=>credited(i)&&creditDate(i,s,tz)<=date;const lastDate=s=>K.lowerItems(s).filter(i=>done(i,s)).map(i=>creditDate(i,s,tz)).sort().at(-1)||s.date;
  const hs=history.filter(s=>s.status!=='discarded'&&(rule.rotationScope!=='profile'||s.ruleId===rule.id||(!s.ruleId&&rule.id==='standard'))&&K.lowerItems(s).some(i=>done(i,s))).sort((a,b)=>lastDate(a).localeCompare(lastDate(b))||(a.completedAt||a.startedAt||0)-(b.completedAt||b.startedAt||0));
  const h=hs.at(-1);if(!h)return {mode:seq[0]||null,total:0,complete:0,pending:[],advanced:false};
- const lower=K.lowerItems(h),pending=lower.filter(i=>!done(i,h));let advance=rule.rotationWhen==='lower-complete'?!pending.length:rule.rotationWhen==='any-lower'?lower.some(i=>done(i,h)):rule.rotationWhen==='session-complete'?h.items.filter(i=>!i.bonus).every(i=>done(i,h)):false;
+ const lower=K.lowerItems(h),pending=lower.filter(i=>!done(i,h));let advance=rule.rotationWhen==='lower-complete'?!pending.length:rule.rotationWhen==='any-lower'?lower.some(i=>done(i,h)):rule.rotationWhen==='session-complete'?h.items.filter(i=>!i.bonus&&!i.ankleAddon).every(i=>done(i,h)):false;
  if(!rule.autoRotate)advance=false;const idx=seq.indexOf(h.mode),mode=advance?seq[(idx+1)%seq.length]:(seq.includes(h.mode)?h.mode:seq[0]);
  return {mode:mode||null,total:lower.length,complete:lower.length-pending.length,pending:advance?[]:pending,advanced:advance,from:h.id,previousMode:h.mode};
 }
