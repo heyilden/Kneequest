@@ -1,5 +1,5 @@
-const CACHE='kneequest-4.0.0';
-const FILES=["./", "./index.html", "./app.css", "./next.css", "./data.js", "./engine.js", "./art.js", "./v3-model.js", "./next-model.js", "./dual.js", "./app.js", "./sync-core.js", "./cloud.js", "./tab-lock.js", "./firebase-config.js", "./textfix.js", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
+const CACHE='kneequest-4.0.1-ankle';
+const FILES=["./", "./index.html", "./app.css", "./next.css", "./data.js", "./engine.js", "./art.js", "./v3-model.js", "./next-model.js", "./dual.js", "./app.js", "./ankle-extension.js", "./sync-core.js", "./cloud.js", "./tab-lock.js", "./firebase-config.js", "./textfix.js", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('kneequest-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin)return;if(!FILES.some(f=>new URL(f,self.registration.scope).pathname===u.pathname))return;e.respondWith(caches.open(CACHE).then(async c=>{try{const r=await fetch(e.request);if(r.ok)await c.put(e.request,r.clone());return r;}catch{return await c.match(e.request)||Response.error();}}));});
