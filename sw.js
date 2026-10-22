@@ -1,4 +1,4 @@
-const CACHE='kneequest-4.0.1-ankle';
+const CACHE='kneequest-4.0.2-ankle-timer';
 const FILES=["./", "./index.html", "./app.css", "./next.css", "./data.js", "./engine.js", "./art.js", "./v3-model.js", "./next-model.js", "./dual.js", "./app.js", "./ankle-extension.js", "./sync-core.js", "./cloud.js", "./tab-lock.js", "./firebase-config.js", "./textfix.js", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('kneequest-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
